@@ -8,29 +8,33 @@
 
 "use strict";
 
-var expect = require("chai").expect;
+// var expect = require("chai").expect;
+const controllers = require("../controllers/projects");
 const mongoose = require("mongoose");
 
 // const CONNECTION_STRING = process.env.DB; //MongoClient.connect(CONNECTION_STRING, function(err, db) {});
-mongoose.connect(process.env.DB);
+mongoose.connect(
+  process.env.DB,
+  {
+    useNewUrlParser: true
+  }
+);
 
 module.exports = function(app) {
   app
     .route("/api/issues/:project")
 
     .get(function(req, res) {
-      var project = req.params.project;
+      const project = req.params.project;
     })
 
-    .post(function(req, res) {
-      var project = req.params.project;
-    })
+    .post(controllers.createIssue)
 
     .put(function(req, res) {
-      var project = req.params.project;
+      const project = req.params.project;
     })
 
     .delete(function(req, res) {
-      var project = req.params.project;
+      const project = req.params.project;
     });
 };
