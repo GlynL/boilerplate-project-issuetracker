@@ -3,36 +3,50 @@ const Project = require("../models/Project");
 const Issue = require("../models/Issue");
 
 exports.createIssue = async function(req, res) {
+  // clearing db for testing
   await Project.deleteMany({});
   await Issue.deleteMany({});
-  // created_on(date / time), updated_on(date / time), open(boolean, true for open, false for closed), and _id.
+  // ------------------
 
+  // addIssue to db
   const addIssue = project =>
+    // wrap in promise so that it can be awaited
     new Promise(async function(resolve, reject) {
+      // get current time as ISO time
       const getCurrentDate = () => new Date().toISOString();
-
+      // set issue fields
       const issue = req.body;
       issue.project = project._id;
       const date = getCurrentDate();
       issue.created_on = date;
       issue.updated_on = date;
       issue.open = true;
+      // create issue in db
       try {
-        console.log(issue);
         const newIssue = await Issue.create(issue);
         resolve(newIssue);
-      } catch {
-        reject("issue creating issue");
+      } catch (err) {
+        reject(err);
       }
     });
 
   const name = req.params.project;
+
+  // make sure a name was passed in url
   if (!name) throw new Error("no project defined");
-  let project = await Project.findOne({ name });
-  if (!project) {
-    project = await Project.create({ name });
+  try {
+    // search for project
+    let project = await Project.findOne({ name });
+    // create new project if doesn't exist
+    if (!project) {
+      project = await Project.create({ name });
+    }
+    // add issue
+    const newIssue = await addIssue(project);
+    console.log(newIssue);
+    // respond with issue
+    res.json(newIssue);
+  } catch (err) {
+    throw new Error(err);
   }
-  const newIssue = await addIssue(project);
-  console.log(newIssue);
-  res.json(newIssue);
 };
