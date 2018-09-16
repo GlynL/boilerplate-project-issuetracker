@@ -9,6 +9,8 @@
 "use strict";
 
 // var expect = require("chai").expect;
+const express = require("express");
+const router = express.Router();
 const controllers = require("../controllers/projects");
 const mongoose = require("mongoose");
 
@@ -20,21 +22,18 @@ mongoose.connect(
   }
 );
 
-module.exports = function(app) {
-  app
-    .route("/api/issues/:project")
+router.get("/:project", function(req, res) {
+  const project = req.params.project;
+});
 
-    .get(function(req, res) {
-      const project = req.params.project;
-    })
+router.post("/:project", controllers.createIssue);
 
-    .post(controllers.createIssue)
+router.put("/:project", function(req, res) {
+  const project = req.params.project;
+});
 
-    .put(function(req, res) {
-      const project = req.params.project;
-    })
+router.delete("/:project", function(req, res) {
+  const project = req.params.project;
+});
 
-    .delete(function(req, res) {
-      const project = req.params.project;
-    });
-};
+module.exports = router;

@@ -34,7 +34,7 @@ app.route("/").get(function(req, res) {
 fccTestingRoutes(app);
 
 //Routing for API
-apiRoutes(app);
+app.use("/api/issues", apiRoutes);
 
 //404 Not Found Middleware
 app.use(function(req, res, next) {
@@ -42,6 +42,18 @@ app.use(function(req, res, next) {
     .status(404)
     .type("text")
     .send("Not Found");
+});
+
+app.use(function(err, req, res, next) {
+  if (res.headersSent) {
+    return next(err);
+  }
+  console.log(err);
+  return res.status(err.status || 500).json({
+    error: {
+      message: err.message || "Oops, something went wrong!"
+    }
+  });
 });
 
 //Start our server and tests!

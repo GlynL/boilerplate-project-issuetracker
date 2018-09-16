@@ -27,34 +27,52 @@ describe("POST /api/issues/{project} => object with issue data", () => {
     expect(data.updated_on).toBeDefined();
     expect(data.open).toBeTruthy();
   });
+
+  test("Required fields filled in", async () => {
+    expect.assertions(9);
+    const res = await fetch("http://localhost:8080/api/issues/test", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json; charset=utf-8"
+      },
+      body: JSON.stringify({
+        issue_title: "Title",
+        issue_text: "text",
+        created_by: "Functional Test - Every field filled in",
+        assigned_to: "",
+        status_text: ""
+      })
+    });
+    expect(res.status).toBe(200);
+    const data = await res.json();
+    expect(data.issue_title).toBe("Title");
+    expect(data.issue_text).toBe("text");
+    expect(data.created_by).toBe("Functional Test - Every field filled in");
+    expect(data.assigned_to).toBe("");
+    expect(data.status_text).toBe("");
+    expect(data.created_on).toBeDefined();
+    expect(data.updated_on).toBeDefined();
+    expect(data.open).toBeTruthy();
+  });
+
+  test("Missing required fields", async () => {
+    expect.assertions(1);
+    const res = await fetch("http://localhost:8080/api/issues/test", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json; charset=utf-8"
+      },
+      body: JSON.stringify({
+        issue_title: "",
+        issue_text: "",
+        created_by: "",
+        assigned_to: "",
+        status_text: ""
+      })
+    });
+    expect(res.status).toBe(400);
+  });
 });
-
-// suite('Functional Tests', function () {
-
-//   suite('POST /api/issues/{project} => object with issue data', function () {
-
-//     test('Every field filled in', function (done) {
-//       chai.request(server)
-//         .post('/api/issues/test')
-//         .send({
-//           issue_title: 'Title',
-//           issue_text: 'text',
-//           created_by: 'Functional Test - Every field filled in',
-//           assigned_to: 'Chai and Mocha',
-//           status_text: 'In QA'
-//         })
-//         .end(function (err, res) {
-//           assert.equal(res.status, 200);
-
-//           //fill me in too!
-
-//           done();
-//         });
-//     });
-
-//     test('Required fields filled in', function (done) {
-
-//     });
 
 //     test('Missing required fields', function (done) {
 

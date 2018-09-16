@@ -2,11 +2,25 @@ const mongoose = require("mongoose");
 const Project = require("../models/Project");
 const Issue = require("../models/Issue");
 
-exports.createIssue = async function(req, res) {
+exports.createIssue = async function(req, res, next) {
   // clearing db for testing
-  await Project.deleteMany({});
+  await Project.deleteOne({ name: "test" });
   await Issue.deleteMany({});
+
   // ------------------
+
+  function validateFields(...fields) {
+    const fieldCheck = fields.some(
+      field => typeof field !== "string" || field === ""
+    );
+    if (fieldCheck) {
+      let err = new Error();
+      // res.statusCode = 400;
+      err.status = 400;
+      err.message = "invalid field";
+      return err;
+    }
+  }
 
   // addIssue to db
   const addIssue = project =>
@@ -16,13 +30,18 @@ exports.createIssue = async function(req, res) {
       const getCurrentDate = () => new Date().toISOString();
       // set issue fields
       const issue = req.body;
-      issue.project = project._id;
-      const date = getCurrentDate();
-      issue.created_on = date;
-      issue.updated_on = date;
-      issue.open = true;
-      // create issue in db
+      // check field input
       try {
+        const { issue_title, issue_text, created_by } = issue;
+        const fieldCheck = validateFields(issue_title, issue_text, created_by);
+        if (fieldCheck instanceof Error) throw fieldCheck;
+        // generate extra fields
+        issue.project = project._id;
+        const date = getCurrentDate();
+        issue.created_on = date;
+        issue.updated_on = date;
+        issue.open = true;
+        // create issue in db
         const newIssue = await Issue.create(issue);
         resolve(newIssue);
       } catch (err) {
@@ -43,10 +62,9 @@ exports.createIssue = async function(req, res) {
     }
     // add issue
     const newIssue = await addIssue(project);
-    console.log(newIssue);
     // respond with issue
     res.json(newIssue);
   } catch (err) {
-    throw new Error(err);
+    next(err);
   }
 };
