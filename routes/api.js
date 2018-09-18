@@ -22,15 +22,11 @@ mongoose.connect(
   }
 );
 
-router.get("/:project", function(req, res) {
-  const project = req.params.project;
-});
+router.get("/:project", controllers.getIssues);
 
 router.post("/:project", controllers.createIssue);
 
-router.put("/:project", function(req, res) {
-  const project = req.params.project;
-});
+router.put("/:project", controllers.editIssue);
 
 router.delete("/:project", function(req, res) {
   const project = req.params.project;
