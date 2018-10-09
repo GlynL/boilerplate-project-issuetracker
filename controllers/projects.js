@@ -135,11 +135,13 @@ exports.removeIssue = async function(req, res, next) {
   const project = req.params.project;
   if (!project) next(errorMessage(400, "no project"));
 
-  const id = req.body._id;
+  const id = req.body.id;
+  console.log(id);
   if (!id) next(errorMessage(400, "_id error"));
 
   try {
     await Issue.findByIdAndRemove(id);
+    res.json({ message: `successfully deleted ${id}` });
   } catch (err) {
     if (err) next(errorMessage(400, `could not delete ${id}`));
   }

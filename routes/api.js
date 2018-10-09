@@ -28,8 +28,6 @@ router.post("/:project", controllers.createIssue);
 
 router.put("/:project", controllers.editIssue);
 
-router.delete("/:project", function(req, res) {
-  const project = req.params.project;
-});
+router.delete("/:project", controllers.removeIssue);
 
 module.exports = router;

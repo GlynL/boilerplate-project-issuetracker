@@ -1,5 +1,7 @@
 require("isomorphic-fetch");
 
+let id;
+
 describe("POST /api/issues/{project} => object with issue data", () => {
   test("every field filled in", async () => {
     expect.assertions(9);
@@ -18,6 +20,7 @@ describe("POST /api/issues/{project} => object with issue data", () => {
     });
     expect(res.status).toBe(200);
     const data = await res.json();
+    id = data._id;
     expect(data.issue_title).toBe("Title");
     expect(data.issue_text).toBe("text");
     expect(data.created_by).toBe("Functional Test - Every field filled in");
@@ -76,7 +79,6 @@ describe("POST /api/issues/{project} => object with issue data", () => {
 
 describe("PUT /api/issues/{project} => text", () => {
   test("no body", async () => {
-    // 5b9e424725ece020a4d56c6f
     expect.assertions(1);
     const res = await fetch("http://localhost:8080/api/issues/test", {
       method: "PUT",
@@ -87,7 +89,6 @@ describe("PUT /api/issues/{project} => text", () => {
     expect(res.status).toBe(400);
   });
   test("no id", async () => {
-    // 5b9e424725ece020a4d56c6f
     expect.assertions(1);
     const res = await fetch("http://localhost:8080/api/issues/test", {
       method: "PUT",
@@ -208,14 +209,12 @@ describe("DELETE /api/issues/{project} => text", () => {
       headers: {
         "Content-Type": "application/json; charset=utf-8"
       },
-      body: JSON.stringifiy({
-        // ! can we set this dynamiclaly? otherwise wont' work everytime
-        _id: "hmmmm"
+      body: JSON.stringify({
+        id
       })
     });
     expect(res.status).toBe(200);
     const data = await res.json();
-    // todo: add id
-    expect(data.message).toBe(`successfully deleted`);
+    expect(data.message).toBe(`successfully deleted ${id}`);
   });
 });
