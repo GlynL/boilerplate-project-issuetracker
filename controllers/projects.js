@@ -123,20 +123,26 @@ exports.getIssues = async function(req, res, next) {
   const project = req.params.project;
   // check project is provided
   if (!project) next(errorMessage(400, "no project"));
-  const issues = await Issue.find(req.query).populate({
-    path: "project",
-    match: { name: project }
-  });
+  try {
+    const issues = await Issue.find(req.query).populate({
+      path: "project",
+      match: { name: project }
+    });
 
-  res.json(issues);
+    const matchingIssues = issues.filter(
+      issue => issue.project && issue.project.name === project
+    );
+    res.json(matchingIssues);
+  } catch (err) {
+    next(errorMessage(400, "error querying"));
+  }
 };
 
 exports.removeIssue = async function(req, res, next) {
   const project = req.params.project;
   if (!project) next(errorMessage(400, "no project"));
 
-  const id = req.body.id;
-  console.log(id);
+  const id = req.body._id;
   if (!id) next(errorMessage(400, "_id error"));
 
   try {

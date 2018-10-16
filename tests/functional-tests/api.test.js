@@ -210,7 +210,7 @@ describe("DELETE /api/issues/{project} => text", () => {
         "Content-Type": "application/json; charset=utf-8"
       },
       body: JSON.stringify({
-        id
+        _id: id
       })
     });
     expect(res.status).toBe(200);
