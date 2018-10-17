@@ -142,7 +142,7 @@ exports.removeIssue = async function(req, res, next) {
   const project = req.params.project;
   if (!project) next(errorMessage(400, "no project"));
 
-  const id = req.body._id;
+  const id = req.params.id;
   if (!id) next(errorMessage(400, "_id error"));
 
   try {

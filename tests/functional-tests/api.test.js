@@ -204,14 +204,11 @@ describe("DELETE /api/issues/{project} => text", () => {
 
   test("valid id", async () => {
     expect.assertions(2);
-    const res = await fetch("http://localhost:8080/api/issues/test", {
+    const res = await fetch(`http://localhost:8080/api/issues/test/${id}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json; charset=utf-8"
-      },
-      body: JSON.stringify({
-        _id: id
-      })
+      }
     });
     expect(res.status).toBe(200);
     const data = await res.json();

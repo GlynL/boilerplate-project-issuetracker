@@ -28,6 +28,6 @@ router.post("/:project", controllers.createIssue);
 
 router.put("/:project", controllers.editIssue);
 
-router.delete("/:project", controllers.removeIssue);
+router.delete("/:project/:id", controllers.removeIssue);
 
 module.exports = router;
